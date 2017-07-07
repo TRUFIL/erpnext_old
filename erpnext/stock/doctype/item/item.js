@@ -122,6 +122,14 @@ frappe.ui.form.on("Item", {
 			frm.set_value("description", frm.doc.item_code);
 	},
 	
+	item_group: function(frm) {
+		if (frm.doc.item_group == "Bundle") {
+			frm.set_value("is_stock_item", 0);
+			frm.set_value("is_fixed_asset", 0);
+			frm.set_value("default_warehouse","");
+		}
+	},
+
 	is_stock_item: function(frm) {
 		if(!frm.doc.is_stock_item) {
 			frm.set_value("has_batch_no", 0);

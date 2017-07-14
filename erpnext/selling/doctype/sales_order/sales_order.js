@@ -5,7 +5,6 @@
 
 frappe.ui.form.on("Sales Order", {
 	setup: function(frm) {
-		$.extend(frm.cscript, new erpnext.selling.SalesOrderController({frm: frm}));
 		frm.custom_make_buttons = {
 			'Delivery Note': 'Delivery',
 			'Sales Invoice': 'Invoice',
@@ -348,6 +347,7 @@ erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend(
 	}
 });
 
+<<<<<<< HEAD
 cur_frm.fields_dict['items'].grid.get_field("item_code").get_query = function() {
 	return{
 		query: "erpnext.controllers.queries.item_query",
@@ -355,3 +355,6 @@ cur_frm.fields_dict['items'].grid.get_field("item_code").get_query = function() 
 	}
 }
 
+=======
+$.extend(cur_frm.cscript, new erpnext.selling.SalesOrderController({frm: cur_frm}));
+>>>>>>> 35d0de8276139f04e3c72b0b0252cd2c692b1e9c

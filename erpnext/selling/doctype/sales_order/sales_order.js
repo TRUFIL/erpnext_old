@@ -347,3 +347,11 @@ erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend(
 		}
 	}
 });
+
+cur_frm.fields_dict['items'].grid.get_field("item_code").get_query = function() {
+	return{
+		query: "erpnext.controllers.queries.item_query",
+		filters:{ 'is_sales_item': 1, 'is_product_bundle': 1 }
+	}
+}
+

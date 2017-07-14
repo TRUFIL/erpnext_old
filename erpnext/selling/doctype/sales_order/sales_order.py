@@ -51,9 +51,39 @@ class SalesOrder(SellingController):
 		# validate transaction date v/s delivery date
 		if self.delivery_date:
 			if getdate(self.transaction_date) > getdate(self.delivery_date):
-				frappe.msgprint(_("Expected Delivery Date is be before Sales Order Date"),
+				frappe.msgprint(_("Expected Delivery Date is before Sales Order Date"),
 					indicator='orange',
 					title=_('Warning'))
+
+		# validate transaction date v/s PO date
+		if self.po_date:
+			if getdate(self.po_date) > getdate(self.transaction_date):
+				frappe.throw(_("PO Date cannot be of future date"),
+					exc='ValidationError',
+					title=_('Error'))
+		else:
+			frappe.throw(_("PO Date is required"),
+				exc='ValidationError',
+				title=_('Error'))
+
+		# validate transaction date v/s validity date
+		if self.validity_date:
+			if getdate(self.transaction_date) > getdate(self.validity_date):
+				frappe.throw(_("Validity Date is before Sales Order Date"),
+				exc='ValidationError',
+				title=_('Error'))
+		else:
+			frappe.throw(_("Validity Date is required"),
+				exc='ValidationError',
+				title=_('Error'))
+
+		# validate Contract Value
+		if self.contract_value:
+			pass
+		else:
+			frappe.throw(_("Contract Value is required"),
+				exc='ValidationError',
+				title=_('Error'))
 
 	def validate_po(self):
 		# validate p.o date v/s delivery date
@@ -518,7 +548,8 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 		"Sales Order": {
 			"doctype": "Sales Invoice",
 			"field_map": {
-				"party_account_currency": "party_account_currency"
+				"party_account_currency": "party_account_currency",
+				"name": "sales_order"
 			},
 			"validation": {
 				"docstatus": ["=", 1]
@@ -529,6 +560,7 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 			"field_map": {
 				"name": "so_detail",
 				"parent": "sales_order",
+				"cust_item_code": "customer_item_code"
 			},
 			"postprocess": update_item,
 			"condition": lambda doc: doc.qty and (doc.base_amount==0 or abs(doc.billed_amt) < abs(doc.amount))

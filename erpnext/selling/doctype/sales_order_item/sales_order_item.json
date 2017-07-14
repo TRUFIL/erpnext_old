@@ -10,7 +10,7 @@
  "docstatus": 0, 
  "doctype": "DocType", 
  "document_type": "Document", 
- "editable_grid": 1, 
+ "editable_grid": 0, 
  "engine": "InnoDB", 
  "fields": [
   {
@@ -1933,7 +1933,7 @@
  "istable": 1, 
  "max_attachments": 0, 
  "menu_index": 0, 
- "modified": "2017-05-10 17:14:48.277982", 
+ "modified": "2017-07-08 14:40:57.931390", 
  "modified_by": "Administrator", 
  "module": "Selling", 
  "name": "Sales Order Item", 

@@ -328,6 +328,14 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 // for backward compatibility: combine new and previous states
 $.extend(cur_frm.cscript, new erpnext.accounts.SalesInvoiceController({frm: cur_frm}));
 
+cur_frm.fields_dict['items'].grid.get_field("item_code").get_query = function() {
+	return{
+		query: "erpnext.controllers.queries.item_query",
+		filters:{ 'is_sales_item': 1, 'is_product_bundle': 1 }
+	}
+}
+
+
 // Hide Fields
 // ------------
 cur_frm.cscript.hide_fields = function(doc) {

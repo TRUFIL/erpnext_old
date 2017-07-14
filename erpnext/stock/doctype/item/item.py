@@ -240,7 +240,7 @@ class Item(WebsiteGenerator):
 				frappe.throw(_("Asset Category is mandatory for Fixed Asset item"))
 
 	def validate_product_bundle(self):
-		if (self.item_group == "Bundle"):
+		if (self.is_product_bundle):
 			if self.is_stock_item:
 				frappe.throw(_("product bundle must be a non-stock item."))
 			if self.is_fixed_asset:

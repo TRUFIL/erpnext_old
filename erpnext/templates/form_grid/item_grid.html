@@ -12,6 +12,7 @@
 	{% var visible_column_fieldnames = $.map(visible_columns, function(x, i) {return x.fieldname}); %}
 	<div class="row">
 		<div class="col-sm-6 col-xs-8">
+			{% include "templates/form_grid/includes/visible_cols.html" %}
 			{% if(doc.warehouse) {
 				var color = "grey",
 					title = "Warehouse",
@@ -51,7 +52,6 @@
 				{% if (doc.item_code) { %}<br>{% } %}
                 {%= doc.item_name %}{% } %}
 
-			{% include "templates/form_grid/includes/visible_cols.html" %}
 		</div>
 
 		<!-- qty -->

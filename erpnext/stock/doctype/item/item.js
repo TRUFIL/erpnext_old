@@ -126,6 +126,7 @@ frappe.ui.form.on("Item", {
 		if (frm.doc.item_group == "Bundle") {
 			frm.set_value("is_stock_item", 0);
 			frm.set_value("is_fixed_asset", 0);
+			frm.set_value("is_product_bundle", 1);
 			frm.set_value("default_warehouse","");
 		}
 	},
@@ -135,6 +136,7 @@ frappe.ui.form.on("Item", {
 			frm.set_value("has_batch_no", 0);
 			frm.set_value("create_new_batch", 0);
 			frm.set_value("has_serial_no", 0);
+			frm.set_value("default_warehouse", "");
 		}
 	},
 	

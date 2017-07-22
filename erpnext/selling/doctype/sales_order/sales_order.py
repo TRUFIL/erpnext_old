@@ -566,7 +566,6 @@ def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 			"field_map": {
 				"name": "so_detail",
 				"parent": "sales_order",
-				"cust_item_code": "customer_item_code"
 			},
 			"postprocess": update_item,
 			"condition": lambda doc: doc.qty and (doc.base_amount==0 or abs(doc.billed_amt) < abs(doc.amount))

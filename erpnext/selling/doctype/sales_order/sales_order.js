@@ -12,8 +12,24 @@ frappe.ui.form.on("Sales Order", {
 			'Purchase Order': 'Purchase Order',
 			'Project': 'Project'
 		}
+
 		frm.add_fetch('customer', 'tax_id', 'tax_id');
+
+		frm.set_query('company_address', function(doc) {
+			if(!doc.company) {
+				frappe.throw(_('Please set Company'));
+			}
+
+			return {
+				query: 'frappe.contacts.doctype.address.address.address_query',
+				filters: {
+					link_doctype: 'Company',
+					link_name: doc.company
+				}
+			};
+		});
 	},
+
 	onload: function(frm) {
 		erpnext.queries.setup_queries(frm, "Warehouse", function() {
 			return erpnext.queries.warehouse(frm.doc);
@@ -344,17 +360,24 @@ erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend(
 		if(cint(frappe.boot.notification_settings.sales_order)) {
 			this.frm.email_doc(frappe.boot.notification_settings.sales_order_message);
 		}
+	},
+	company_address: function() {
+		var me = this;
+		if(this.frm.doc.company_address) {
+			frappe.call({
+				method: "frappe.contacts.doctype.address.address.get_address_display",
+				args: {"address_dict": this.frm.doc.company_address },
+				callback: function(r) {
+					if(r.message) {
+						me.frm.set_value("company_address_display", r.message)
+					}
+				}
+			})
+		} else {
+			this.frm.set_value("company_address_display", "");
+		}
 	}
 });
 
-<<<<<<< HEAD
-cur_frm.fields_dict['items'].grid.get_field("item_code").get_query = function() {
-	return{
-		query: "erpnext.controllers.queries.item_query",
-		filters:{ 'is_sales_item': 1, 'is_product_bundle': 1 }
-	}
-}
-
-=======
 $.extend(cur_frm.cscript, new erpnext.selling.SalesOrderController({frm: cur_frm}));
->>>>>>> 35d0de8276139f04e3c72b0b0252cd2c692b1e9c
+

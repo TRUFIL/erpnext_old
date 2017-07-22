@@ -3,6 +3,7 @@
   <div class="col-xs-12 text-center">
     <span style="font-size:18pt"><u>TAX INVOICE</u></span><br>
     <span style="font-size:7pt">(See rule7, for a tax invoice referred to in section 31)</span>
+    <span style="font-size:9pt"><u>{{ doc.invoice_copy }}</u></span>
   </div>
 </div>
 <div class="row">
@@ -10,7 +11,6 @@
     <div>Inv No: <b>{{ doc.name }}</b></div>
   </div>
   <div class="col-xs-4 text-center">
-    <div><u>{{ doc.invoice_copy }}</u></div>
   </div>
   <div class="col-xs-4 text-right">
     <div>Date: <b>{{ doc.get_formatted("posting_date", translated=True) }}</b></div>
@@ -57,4 +57,21 @@
 <!-- Section-8 (Taxes and charge Calculation) -->
 <!-- Section-9 (Terms and Condition Details) -->
 <!-- Section-10 (Footer) -->
+
+<div class="row">
+  <div class="col-xs-8">
+    <p>Declaration:</p>
+    <ol>
+      <li>I/We declare that this invoice shows actual price of the goods and/or servicesdescribed and that all particulars are true and correct</li>
+      <li>Error and Ommission in this invoice shall be subject to juridiction of Navi Mumbai</li>
+    </ol> 
+  </div>
+  <div class="col-xs-4 text-right">
+    <br>
+    <p>For <b>TRU-FIL Limited</b></p>
+    <br><br>
+    <p>Authorised Signatory<br><b>{{ frappe.get_fullname(doc.modified_by) or "" }}</b></p>
+  </div>
+</div>
+
 

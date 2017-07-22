@@ -104,7 +104,7 @@ var erpnext_slides = [
 				options: "", fieldtype: 'Select'
 			},
 
-			{ fieldtype: "Section Break", label: "Financial Year" },
+			{ fieldtype: "Section Break", label: __('Financial Year') },
 			{ fieldname: 'fy_start_date', label: __('Start Date'), fieldtype: 'Date', reqd: 1 },
 			{ fieldtype: "Column Break" },
 			{ fieldname: 'fy_end_date', label: __('End Date'), fieldtype: 'Date', reqd: 1 },
@@ -217,6 +217,17 @@ var erpnext_slides = [
 	},
 
 	{
+		// Sales Target
+		name: 'Goals',
+		domains: ['manufacturing', 'services', 'retail', 'distribution'],
+		title: __("Set your Target"),
+		help: __("Set a sales target you'd like to achieve."),
+		fields: [
+			{fieldtype:"Currency", fieldname:"sales_target", label:__("Monthly Sales Target")},
+		]
+	},
+
+	{
 		// Taxes
 		name: 'taxes',
 		domains: ['manufacturing', 'services', 'retail', 'distribution'],
@@ -225,7 +236,7 @@ var erpnext_slides = [
 		help: __("List your tax heads (e.g. VAT, Customs etc; they should have unique names) and their standard rates. This will create a standard template, which you can edit and add more later."),
 		add_more: 1,
 		max_count: 3,
-		mandatory_entry: 1,
+		mandatory_entry: 0,
 		fields: [
 			{fieldtype:"Section Break"},
 			{fieldtype:"Data", fieldname:"tax", label:__("Tax"),
@@ -297,8 +308,10 @@ var erpnext_slides = [
 				options:[__("Unit"), __("Nos"), __("Box"), __("Pair"), __("Kg"), __("Set"),
 					__("Hour"), __("Minute"), __("Litre"), __("Meter"), __("Gram")],
 				"default": __("Unit"), static: 1},
-			{fieldtype: "Check", fieldname: "is_sales_item", label:__("We sell this Item"), default: 1, static: 1},
-			{fieldtype: "Check", fieldname: "is_purchase_item", label:__("We buy this Item"), static: 1},
+			{fieldtype: "Check", fieldname: "is_sales_item",
+				label:__("We sell this Item"), default: 1, static: 1},
+			{fieldtype: "Check", fieldname: "is_purchase_item",
+				label:__("We buy this Item"), default: 1, static: 1},
 			{fieldtype:"Column Break"},
 			{fieldtype:"Currency", fieldname:"item_price", label:__("Rate"), static: 1},
 			{fieldtype:"Attach Image", fieldname:"item_img", label:__("Attach Image"), is_private: 0, static: 1},

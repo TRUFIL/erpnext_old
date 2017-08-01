@@ -139,20 +139,20 @@ class SalesOrder(SellingController):
 		super(SalesOrder, self).validate_order_type()
 
 	def validate_delivery_date(self):
-		self.final_delivery_date = None
 		if self.order_type == 'Sales':
-			for d in self.get("items"):
-				if not d.delivery_date:
-					frappe.throw(_("Row #{0}: Please enter Delivery Date against item {1}")
-						.format(d.idx, d.item_code))
+			if not self.delivery_date:
+				self.delivery_date = max([d.delivery_date for d in self.get("items")])
 
-				if getdate(self.transaction_date) > getdate(d.delivery_date):
-					frappe.msgprint(_("Expected Delivery Date should be after Sales Order Date"),
-						indicator='orange', title=_('Warning'))
-
-				if not self.final_delivery_date or \
-					(d.delivery_date and getdate(d.delivery_date) > getdate(self.final_delivery_date)):
-						self.final_delivery_date = d.delivery_date
+			if self.delivery_date:
+				for d in self.get("items"):
+					if not d.delivery_date:
+						d.delivery_date = self.delivery_date
+					
+					if getdate(self.transaction_date) > getdate(d.delivery_date):
+						frappe.msgprint(_("Expected Delivery Date should be after Sales Order Date"),
+							indicator='orange', title=_('Warning'))
+			else:
+				frappe.throw(_("Please enter Delivery Date"))
 
 		self.validate_sales_mntc_quotation()
 
@@ -385,6 +385,9 @@ class SalesOrder(SellingController):
 
 	def on_recurring(self, reference_doc):
 		mcount = month_map[reference_doc.recurring_type]
+		self.set("delivery_date", get_next_date(reference_doc.delivery_date, mcount,
+			cint(reference_doc.repeat_on_day_of_month)))
+
 		for d in self.get("items"):
 			reference_delivery_date = frappe.db.get_value("Sales Order Item",
 				{"parent": reference_doc.name, "item_code": d.item_code, "idx": d.idx}, "delivery_date")
@@ -666,14 +669,15 @@ def get_events(start, end, filters=None):
 
 	data = frappe.db.sql("""
 		select
-			so.name, so.customer_name, so.status,
-			so.delivery_status, so.billing_status, so_item.delivery_date
+			`tabSales Order`.name, `tabSales Order`.customer_name, `tabSales Order`.status,
+			`tabSales Order`.delivery_status, `tabSales Order`.billing_status,
+			`tabSales Order Item`.delivery_date
 		from
-			`tabSales Order` so, `tabSales Order Item` so_item
-		where so.name = so_item.parent
-			and (ifnull(so_item.delivery_date, '0000-00-00')!= '0000-00-00') \
-			and (so_item.delivery_date between %(start)s and %(end)s)
-			and so.docstatus < 2
+			`tabSales Order`, `tabSales Order Item`
+		where `tabSales Order`.name = `tabSales Order Item`.parent
+			and (ifnull(`tabSales Order Item`.delivery_date, '0000-00-00')!= '0000-00-00') \
+			and (`tabSales Order Item`.delivery_date between %(start)s and %(end)s)
+			and `tabSales Order`.docstatus < 2
 			{conditions}
 		""".format(conditions=conditions), {
 			"start": start,

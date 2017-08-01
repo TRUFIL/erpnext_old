@@ -15,9 +15,7 @@
 {%- endmacro -%}
 
 <div class="row">
-	<div class="col-xs-6">
-		<p>GSTIN: <b>{{ doc.company_gstin }}</b></p>
-	</div>
+	<div class="col-xs-6"></div>
 	<div class="col-xs-6">
 		{%- if doc.apply_discount_on == "Net Total" -%}
 			{{ render_discount_amount(doc) }}

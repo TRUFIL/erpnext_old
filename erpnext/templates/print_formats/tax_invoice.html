@@ -2,7 +2,7 @@
 <div class="row">
   <div class="col-xs-12 text-center">
     <span style="font-size:18pt"><u>TAX INVOICE</u></span><br>
-    <span style="font-size:7pt">(See rule7, for a tax invoice referred to in section 31)</span>
+    <span style="font-size:7pt">(See rule7, for a tax invoice referred to in section 31)</span><br>
     <span style="font-size:9pt"><u>{{ doc.invoice_copy }}</u></span>
   </div>
 </div>
@@ -38,7 +38,7 @@
       <p>Delivery Address,</p>
       <p style="margin-left: 25px"><b>{{ doc.customer_legal_name }}</b></p>
       <p style="margin-left: 25px">{{ doc.shipping_address }}</p><br>
-      <p style="margin-left: 25px">GSTIN: <b>{{ doc.customer_gstin or NA }}</b></p>
+      <p style="margin-left: 25px">GSTIN: <b>{{ doc.customer_gstin or Not Available }}</b></p>
       {% set gs = frappe.get_doc("Address",  doc.shipping_address_name) %}
       <p style="margin-left: 25px">GST State: <b>{{ gs.gst_state }}</b></p>
     </div>
@@ -70,7 +70,7 @@
     <br>
     <p>For <b>TRU-FIL Limited</b></p>
     <br><br>
-    <p>Authorised Signatory<br><b>{{ frappe.get_fullname(doc.modified_by) or "" }}</b></p>
+    <p>Authorised Signatory</p>
   </div>
 </div>
 

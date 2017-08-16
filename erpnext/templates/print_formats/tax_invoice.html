@@ -26,7 +26,7 @@
       <p>Bill To,</p>
       <p style="margin-left: 25px"><b>{{ doc.customer_legal_name }}</b></p>
       <p style="margin-left: 25px">{{ doc.address_display }}</p><br>
-      <p style="margin-left: 25px">Vendor Code: <b>{{ doc.vendor_code }}</b></p>
+      <p style="margin-left: 25px">Our Vendor Code: <b>{{ doc.vendor_code }}</b></p>
     </div>
   </div>
 </div>
@@ -38,7 +38,7 @@
       <p>Delivery Address,</p>
       <p style="margin-left: 25px"><b>{{ doc.customer_legal_name }}</b></p>
       <p style="margin-left: 25px">{{ doc.shipping_address }}</p><br>
-      <p style="margin-left: 25px">GSTIN: <b>{{ doc.customer_gstin or Not Available }}</b></p>
+      <p style="margin-left: 25px">GSTIN: <b>{{ doc.customer_gstin or NA }}</b></p>
       {% set gs = frappe.get_doc("Address",  doc.shipping_address_name) %}
       <p style="margin-left: 25px">GST State: <b>{{ gs.gst_state }}</b></p>
     </div>
@@ -46,8 +46,16 @@
 </div>
 
 <!-- Section-3 (custom html) -->
-<div>
-  <br><p>This invoice constitute our claim of payment for the services rendered by us in execution of your Purchase Order Reference No: {% set cc = frappe.get_doc("Sales Order", doc.sales_order) %} <b>{{ cc.po_no or "" }}</b> dated <b>{{ cc.get_formatted("po_date", translated=True) or "" }}</b></p>
+<div><br></div>
+<div class="row">
+  <div class="col-xs-2"><span>Your Ref:</span></div>
+  <div class="col-xs-10">
+    {% set cc = frappe.get_doc("Sales Order", doc.sales_order) %} <b>{{ cc.po_no or "" }} dated {{ cc.get_formatted("po_date", translated=True) or "" }}</b>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-2"><span>Invoice For:</span></div>
+  <div class="col-xs-10"><b>{{ doc.summary }}</b></div>
 </div>
 
 <!-- Section-4 (items Table) -->
@@ -73,5 +81,4 @@
     <p>Authorised Signatory</p>
   </div>
 </div>
-
 

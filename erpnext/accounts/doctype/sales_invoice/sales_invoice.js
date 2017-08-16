@@ -581,3 +581,7 @@ var calculate_total_billing_amount =  function(frm) {
 
 	refresh_field('total_billing_amount')
 }
+
+cur_frm.cscript.due_date = function(doc, cdt, cd){
+	cur_frm.set_value("due_date", frappe.datetime.add_days(doc.posting_date, 15));
+}

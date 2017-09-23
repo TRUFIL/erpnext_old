@@ -251,6 +251,14 @@ class SalesOrder(SellingController):
 		if submit_rv:
 			frappe.throw(_("Sales Invoice {0} must be cancelled before cancelling this Sales Order").format(comma_and(submit_rv)))
 
+		# Checks Job Order added on 09-09-2017
+		submit_jo = frappe.db.sql_list("""select t1.name
+			from `tabJob Order` t1,`tabJob Order Item` t2
+			where t1.name = t2.parent and t2.sales_order = %s and t1.docstatus = 1""",
+			self.name)
+		if submit_jo:
+			frappe.throw(_("Job Order {0} must be cancelled before cancelling this Sales Order").format(comma_and(submit_rv)))
+
 		#check maintenance schedule
 		submit_ms = frappe.db.sql_list("""select t1.name from `tabMaintenance Schedule` t1,
 			`tabMaintenance Schedule Item` t2
@@ -523,6 +531,60 @@ def make_delivery_note(source_name, target_doc=None):
 		},
 		"Sales Order Item": {
 			"doctype": "Delivery Note Item",
+			"field_map": {
+				"rate": "rate",
+				"name": "so_detail",
+				"parent": "against_sales_order",
+			},
+			"postprocess": update_item,
+			"condition": lambda doc: abs(doc.delivered_qty) < abs(doc.qty) and doc.delivered_by_supplier!=1
+		},
+		"Sales Taxes and Charges": {
+			"doctype": "Sales Taxes and Charges",
+			"add_if_empty": True
+		},
+		"Sales Team": {
+			"doctype": "Sales Team",
+			"add_if_empty": True
+		}
+	}, target_doc, set_missing_values)
+
+	return target_doc
+
+@frappe.whitelist()
+def make_job_order(source_name, target_doc=None, ignore_permissions=False):
+	def set_missing_values(source, target):
+		if source.po_no:
+			if target.po_no:
+				target_po_no = target.po_no.split(", ")
+				target_po_no.append(source.po_no)
+				target.po_no = ", ".join(list(set(target_po_no))) if len(target_po_no) > 1 else target_po_no[0]
+			else:
+				target.po_no = source.po_no
+
+		target.ignore_pricing_rule = 1
+		target.run_method("set_missing_values")
+		target.run_method("calculate_taxes_and_totals")
+
+	def update_item(source, target, source_parent):
+		target.base_amount = (flt(source.qty) - flt(source.delivered_qty)) * flt(source.base_rate)
+		target.amount = (flt(source.qty) - flt(source.delivered_qty)) * flt(source.rate)
+		target.qty = flt(source.qty) - flt(source.delivered_qty)
+
+		item = frappe.db.get_value("Item", target.item_code, ["item_group", "selling_cost_center"], as_dict=1)
+		target.cost_center = frappe.db.get_value("Project", source_parent.project, "cost_center") \
+			or item.selling_cost_center \
+			or frappe.db.get_value("Item Group", item.item_group, "default_cost_center")
+
+	target_doc = get_mapped_doc("Sales Order", source_name, {
+		"Sales Order": {
+			"doctype": "Job Order",
+			"validation": {
+				"docstatus": ["<=", 1]
+			}
+		},
+		"Sales Order Item": {
+			"doctype": "Job Order Item",
 			"field_map": {
 				"rate": "rate",
 				"name": "so_detail",

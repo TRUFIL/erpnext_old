@@ -69,7 +69,8 @@ class SalarySlip(TransactionBase):
 				'amount': amount,
 				'default_amount': amount,
 				'depends_on_lwp' : struct_row.depends_on_lwp,
-				'salary_component' : struct_row.salary_component
+				'salary_component' : struct_row.salary_component,
+				'do_not_include_in_total' : struct_row.do_not_include_in_total
 			})
 		else:
 			component_row.amount = amount
@@ -231,12 +232,12 @@ class SalarySlip(TransactionBase):
 
 		holidays = self.get_holidays_for_employee(self.start_date, self.end_date)
 		working_days = date_diff(self.end_date, self.start_date) + 1
+		actual_lwp = self.calculate_lwp(holidays, working_days)
 		if not cint(frappe.db.get_value("HR Settings", None, "include_holidays_in_total_working_days")):
 			working_days -= len(holidays)
 			if working_days < 0:
 				frappe.throw(_("There are more holidays than working days this month."))
 
-		actual_lwp = self.calculate_lwp(holidays, working_days)
 		if not lwp:
 			lwp = actual_lwp
 		elif lwp != actual_lwp:
@@ -345,11 +346,13 @@ class SalarySlip(TransactionBase):
 					(flt(d.default_amount) * flt(self.payment_days)
 					/ cint(self.total_working_days)), self.precision("amount", component_type)
 				)
+
 			elif not self.payment_days and not self.salary_slip_based_on_timesheet:
 				d.amount = 0
 			elif not d.amount:
 				d.amount = d.default_amount
-			self.set(total_field, self.get(total_field) + flt(d.amount))
+			if not d.do_not_include_in_total:
+				self.set(total_field, self.get(total_field) + flt(d.amount))
 
 	def calculate_net_pay(self):
 		if self.salary_structure:

@@ -8,10 +8,10 @@ QUnit.test("test: purchase order with taxes and charges", function(assert) {
 		() => {
 			return frappe.tests.make('Purchase Order', [
 				{supplier: 'Test Supplier'},
-				{company: 'Wind Power LLC'},
 				{is_subcontracted: 'No'},
 				{buying_price_list: 'Test-Buying-USD'},
 				{currency: 'USD'},
+				{"schedule_date": frappe.datetime.add_days(frappe.datetime.now_date(), 1)},
 				{items: [
 					[
 						{"item_code": 'Test Product 4'},
@@ -20,7 +20,7 @@ QUnit.test("test: purchase order with taxes and charges", function(assert) {
 						{"rate": 500 },
 						{"schedule_date": frappe.datetime.add_days(frappe.datetime.now_date(), 1)},
 						{"expected_delivery_date": frappe.datetime.add_days(frappe.datetime.now_date(), 5)},
-						{"warehouse": 'Stores - WP'}
+						{"warehouse": 'Stores - '+frappe.get_abbr(frappe.defaults.get_default("Company"))}
 					]
 				]},
 

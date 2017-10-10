@@ -63,8 +63,8 @@ frappe.ui.form.on("Item", {
 			frm.page.set_inner_btn_group_as_primary(__("Make"));
 		}
 		if (frm.doc.variant_of) {
-			frm.set_intro(__("This Item is a Variant of {0} (Template).", 
-				[frm.doc.variant_of]), true);
+			frm.set_intro(__('This Item is a Variant of {0} (Template).',
+				[`<a href="#Form/Item/${frm.doc.variant_of}">${frm.doc.variant_of}</a>`]), true);
 		}
 
 		if (frappe.defaults.get_default("item_naming_by")!="Naming Series" || frm.doc.variant_of) {
@@ -97,6 +97,12 @@ frappe.ui.form.on("Item", {
 			}
 			frappe.set_route('Form', 'Item', new_item.name);
 		});
+
+		if(frm.doc.has_variants) {
+			frm.add_custom_button(__("Item Variant Settings"), function() {
+				frappe.set_route("Form", "Item Variant Settings");
+			}, __("View"));
+		}
 	},
 
 	validate: function(frm){
@@ -121,7 +127,6 @@ frappe.ui.form.on("Item", {
 		if(!frm.doc.description)
 			frm.set_value("description", frm.doc.item_code);
 	},
-	
 	item_group: function(frm) {
 		if (frm.doc.item_group == "Bundle") {
 			frm.set_value("is_stock_item", 0);
@@ -130,7 +135,6 @@ frappe.ui.form.on("Item", {
 			frm.set_value("default_warehouse","");
 		}
 	},
-
 	is_stock_item: function(frm) {
 		if(!frm.doc.is_stock_item) {
 			frm.set_value("has_batch_no", 0);
@@ -139,7 +143,7 @@ frappe.ui.form.on("Item", {
 			frm.set_value("default_warehouse", "");
 		}
 	},
-	
+
 	copy_from_item_group: function(frm) {
 		return frm.call({
 			doc: frm.doc,
@@ -253,15 +257,18 @@ $.extend(erpnext.item, {
 		if(frm.doc.__islocal)
 			return;
 
-		frappe.require('assets/js/item-dashboard.min.js', function() {
-			var section = frm.dashboard.add_section('<h5 style="margin-top: 0px;">\
-				<a href="#stock-balance">' + __("Stock Levels") + '</a></h5>');
-			erpnext.item.item_dashboard = new erpnext.stock.ItemDashboard({
-				parent: section,
-				item_code: frm.doc.name
+		// Show Stock Levels only if is_stock_item
+		if (frm.doc.is_stock_item) {
+			frappe.require('assets/js/item-dashboard.min.js', function() {
+				var section = frm.dashboard.add_section('<h5 style="margin-top: 0px;">\
+					<a href="#stock-balance">' + __("Stock Levels") + '</a></h5>');
+				erpnext.item.item_dashboard = new erpnext.stock.ItemDashboard({
+					parent: section,
+					item_code: frm.doc.name
+				});
+				erpnext.item.item_dashboard.refresh();
 			});
-			erpnext.item.item_dashboard.refresh();
-		});
+		}
 	},
 
 	edit_prices_button: function(frm) {

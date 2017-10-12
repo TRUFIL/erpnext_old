@@ -246,8 +246,12 @@ class Item(WebsiteGenerator):
 		if (self.is_product_bundle):
 			if self.is_stock_item:
 				frappe.throw(_("product bundle must be a non-stock item."))
+
 			if self.is_fixed_asset:
 				frappe.throw(_("product bundle must be a non-asset item."))
+
+			if self.is_purchase_item:
+				frappe.throw(_("product bundle must be a non-purchase item."))
 
 
 	def get_context(self, context):

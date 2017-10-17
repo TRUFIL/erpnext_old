@@ -53,7 +53,7 @@ calendars = ["Task", "Production Order", "Leave Application", "Sales Order", "Ho
 
 fixtures = ["Web Form"]
 # fixtures = ["Custom Field"]
-fixtures = ["Custom Field", "Custom Script", "Property Setter", "Print Format", "Report", "Workflow", "Workflow State", "Workflow Action"]
+# fixtures = ["Custom Field", "Custom Script", "Property Setter", "Print Format", "Report", "Workflow", "Workflow State", "Workflow Action"]
 
 domains = {
 	'Distribution': 'erpnext.domains.distribution',

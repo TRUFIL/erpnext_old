@@ -252,12 +252,12 @@ class SalesOrder(SellingController):
 			frappe.throw(_("Sales Invoice {0} must be cancelled before cancelling this Sales Order").format(comma_and(submit_rv)))
 
 		# Checks Job Order added on 09-09-2017
-		submit_jo = frappe.db.sql_list("""select t1.name
-			from `tabJob Order` t1,`tabJob Order Item` t2
-			where t1.name = t2.parent and t2.sales_order = %s and t1.docstatus = 1""",
-			self.name)
-		if submit_jo:
-			frappe.throw(_("Job Order {0} must be cancelled before cancelling this Sales Order").format(comma_and(submit_rv)))
+		#submit_jo = frappe.db.sql_list("""select t1.name
+		#	from `tabJob Order` t1,`tabJob Order Item` t2
+		#	where t1.name = t2.parent and t2.sales_order = %s and t1.docstatus = 1""",
+		#	self.name)
+		#if submit_jo:
+		#	frappe.throw(_("Job Order {0} must be cancelled before cancelling this Sales Order").format(comma_and(submit_rv)))
 
 		#check maintenance schedule
 		submit_ms = frappe.db.sql_list("""select t1.name from `tabMaintenance Schedule` t1,

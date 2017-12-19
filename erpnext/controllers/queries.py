@@ -64,9 +64,10 @@ def customer_query(doctype, txt, searchfield, start, page_len, filters):
 	cust_master_name = frappe.defaults.get_user_default("cust_master_name")
 
 	if cust_master_name == "Customer Name":
-		fields = ["name", "customer_group", "territory"]
+		fields = ["name","customer_group","customer_legal_name","territory","cin","yoi","pan"]
 	else:
-		fields = ["name", "customer_name", "customer_group", "territory"]
+		fields = ["name","customer_name","customer_group","customer_legal_name", 
+			"customer_group","territory","cin","yoi","pan"]
 
 	meta = frappe.get_meta("Customer")
 	searchfields = meta.get_search_fields()
